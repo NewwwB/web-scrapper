@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selenium Script Results</title>
+</head>
+<body>
+<button id="runScriptBtn">Click here to run the script</button>
+<div id="result" style="display: none;">
+    <p id="message"></p>
+    <ul id="trendsList"></ul>
+    <p id="ipAddress"></p>
+    <pre id="jsonData"></pre>
+    <button id="runAgainBtn">Click here to run the query again</button>
+</div>
+
+<script>
+    document.getElementById('runScriptBtn').addEventListener('click', async () => {
+        const response = await fetch('/run-script');
+        const data = await response.json();
+
+        document.getElementById('message').textContent = data.message;
+        const trendsList = document.getElementById('trendsList');
+        trendsList.innerHTML = '';
+        data.trends.forEach(trend => {
+            const listItem = document.createElement('li');
+            listItem.textContent = trend;
+            trendsList.appendChild(listItem);
+        });
+        document.getElementById('ipAddress').textContent = `The IP address used for this query was ${data.ipAddress}.`;
+        document.getElementById('jsonData').textContent = JSON.stringify(data.jsonData, null, 2);
+
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('runAgainBtn').addEventListener('click', () => {
+            window.location.reload();
+        });
+    });
+</script>
+</body>
+</html>
